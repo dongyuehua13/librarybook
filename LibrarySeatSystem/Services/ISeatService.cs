@@ -11,5 +11,6 @@ public interface ISeatService
     Task<List<Seat>> GetAllSeatsAsync();
     Task<(bool Success, string Message)> CreateSeatAsync(Seat seat);
     Task<(bool Success, string Message)> UpdateSeatAsync(Seat seat);
+    Task<(bool Success, string Message)> ToggleActiveAsync(int id);
     Task SaveChangesAsync();
 }

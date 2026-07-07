@@ -13,9 +13,11 @@
             <div class="card-body">
                 <form method="post">
                     <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <div class="mb-3">
                         <label class="form-label">座位编号</label>
                         <input asp-for="SeatNumber" class="form-control" required />
+                        <span asp-validation-for="SeatNumber" class="text-danger"></span>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
