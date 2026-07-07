@@ -46,7 +46,7 @@
                             <select name="endTime" class="form-select" required>
                                 @for (int h = 9; h <= 22; h++)
                                 {
-                                    <option value="@(h):00" selected="@(h == 10)">@h:00</option>
+                                    <option value="@(h):00" selected="@(h == 9)">@h:00</option>
                                 }
                             </select>
                         </div>
@@ -64,18 +64,39 @@
     </div>
 </div>
 
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="reserveToast" class="toast align-items-center text-bg-success border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body" id="reserveToastMsg"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         $('#reserveForm').submit(function(e) {
             e.preventDefault();
+            var btn = $(this).find('button[type="submit"]');
+            btn.prop('disabled', true);
             $.post('/Home/Reserve', $(this).serialize(), function(res) {
-                var msg = $('#resultMsg');
+                var toastEl = document.getElementById('reserveToast');
+                var toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+                var msgEl = $('#reserveToastMsg');
                 if (res.success) {
-                    msg.html('<div class="alert alert-success">' + res.msg + '，<a href="/Home/MyReservations">查看我的预约</a></div>');
-                    $('#reserveForm button').prop('disabled', true);
+                    toastEl.classList.remove('text-bg-danger');
+                    toastEl.classList.add('text-bg-success');
+                    msgEl.html(res.msg + '，<a href="/Home/MyReservations" class="text-white fw-bold">查看我的预约</a>');
+                    toast.show();
                 } else {
-                    msg.html('<div class="alert alert-danger">' + res.msg + '</div>');
+                    toastEl.classList.remove('text-bg-success');
+                    toastEl.classList.add('text-bg-danger');
+                    msgEl.text(res.msg);
+                    toast.show();
+                    btn.prop('disabled', false);
                 }
+            }).fail(function() {
+                btn.prop('disabled', false);
             });
         });
     </script>

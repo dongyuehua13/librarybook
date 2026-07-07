@@ -25,6 +25,8 @@ public class AdminController : Controller
 
     public IActionResult Login()
     {
+        if (HttpContext.Session.GetInt32("AdminId").HasValue)
+            return RedirectToAction("Seats");
         return View();
     }
 
