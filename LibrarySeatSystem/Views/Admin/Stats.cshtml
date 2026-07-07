@@ -1,0 +1,115 @@
+@model LibrarySeatSystem.ViewModels.AdminStats
+@{
+    ViewData["Title"] = "数据统计";
+    Layout = "_AdminLayout";
+}
+
+<h3 class="mb-3"><i class="bi bi-bar-chart"></i> 数据统计</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <h6 class="text-muted">可用座位</h6>
+                <p class="display-6 fw-bold text-primary">@Model.TotalActiveSeats</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <h6 class="text-muted">总预约次数</h6>
+                <p class="display-6 fw-bold text-success">@Model.TotalReservations</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-info">
+            <div class="card-body">
+                <h6 class="text-muted">今日预约</h6>
+                <p class="display-6 fw-bold text-info">@Model.TodayReservations</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-trophy"></i> 座位预约热度排行</div>
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>座位</th>
+                            <th>预约次数</th>
+                            <th>热度</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int rank = 1;
+                            int maxCount = Model.SeatRankings.Any() ? Model.SeatRankings.First().Count : 1;
+                        }
+                        @foreach (var item in Model.SeatRankings)
+                        {
+                            var pct = maxCount > 0 ? (item.Count * 100 / maxCount) : 0;
+                            <tr>
+                                <td>@(rank++)</td>
+                                <td>@item.SeatNumber</td>
+                                <td>@item.Count</td>
+                                <td>
+                                    <div class="progress" style="height:20px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width:@(pct)%" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+                                            @(pct)%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (!Model.SeatRankings.Any())
+                {
+                    <div class="text-center text-muted p-3">暂无数据</div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header"><i class="bi bi-graph-up"></i> 近14日预约趋势</div>
+            <div class="card-body">
+                @if (Model.DailyTrends.Any())
+                {
+                    var maxDaily = Model.DailyTrends.Max(d => d.Count);
+                    <div style="min-height:300px;">
+                        @foreach (var item in Model.DailyTrends)
+                        {
+                            var pct = maxDaily > 0 ? (item.Count * 100 / maxDaily) : 0;
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between small">
+                                    <span>@item.Date.ToString("MM-dd")</span>
+                                    <span>@item.Count 次</span>
+                                </div>
+                                <div class="progress" style="height:24px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width:@(pct)%" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100">
+                                        @if (pct > 20)
+                                        {
+                                            <span class="text-dark fw-bold">@item.Count</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted py-4">暂无预约数据</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

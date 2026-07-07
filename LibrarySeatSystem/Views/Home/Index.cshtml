@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "首页";
+    var userId = Context.Session.GetInt32("UserId");
+    var userName = Context.Session.GetString("UserName");
+}
+
+<div class="text-center mb-4">
+    <h1 class="display-5 fw-bold text-primary"><i class="bi bi-book"></i> 图书馆座位预约系统</h1>
+    <p class="lead text-muted">便捷预约，高效学习</p>
+</div>
+
+@if (!userId.HasValue)
+{
+    <div class="alert alert-warning text-center">
+        <i class="bi bi-info-circle"></i> 请先
+        <a asp-action="SwitchUser" class="alert-link">选择学生账号</a>
+        后开始预约座位
+    </div>
+}
+else
+{
+    <div class="alert alert-success text-center">
+        <i class="bi bi-person-circle"></i> 当前用户：<strong>@userName</strong>
+        <a asp-action="Logout" class="btn btn-sm btn-outline-danger ms-2">退出</a>
+    </div>
+}
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center border-primary h-100">
+            <div class="card-body">
+                <h5 class="card-title text-primary"><i class="bi bi-grid-3x3-gap"></i> 座位总数</h5>
+                <p class="display-6 fw-bold text-primary">@ViewBag.TotalSeats</p>
+                <p class="card-text text-muted">可用座位数量</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-success h-100">
+            <div class="card-body">
+                <h5 class="card-title text-success"><i class="bi bi-calendar-check"></i> 今日预约</h5>
+                <p class="display-6 fw-bold text-success">@ViewBag.TodayReservations</p>
+                <p class="card-text text-muted">今日预约次数</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-info h-100">
+            <div class="card-body">
+                <h5 class="card-title text-info"><i class="bi bi-building"></i> 楼层分布</h5>
+                <p class="display-6 fw-bold text-info">3</p>
+                <p class="card-text text-muted">1F/2F/3F 自习区</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-grid-3x3-gap display-3 text-primary"></i>
+                <h4 class="mt-2">浏览座位</h4>
+                <p class="text-muted">查看各楼层座位状态，选择空闲座位</p>
+                <a asp-action="Seats" class="btn btn-primary"><i class="bi bi-eye"></i> 查看座位</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar-check display-3 text-success"></i>
+                <h4 class="mt-2">我的预约</h4>
+                <p class="text-muted">查看和管理您的全部预约记录</p>
+                <a asp-action="MyReservations" class="btn btn-success @(!userId.HasValue ? "disabled" : "")">
+                    <i class="bi bi-list"></i> 查看预约
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

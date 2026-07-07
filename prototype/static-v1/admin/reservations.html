@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预约管理 - 管理后台</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../css/custom.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-sm navbar-admin">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fw-bold" href="seats.html"><i class="bi bi-shield-lock"></i> 管理后台</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="adminNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="seats.html"><i class="bi bi-grid-3x3-gap"></i> 座位管理</a></li>
+          <li class="nav-item"><a class="nav-link active" href="reservations.html"><i class="bi bi-calendar-check"></i> 预约管理</a></li>
+          <li class="nav-item"><a class="nav-link" href="stats.html"><i class="bi bi-bar-chart"></i> 数据统计</a></li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="../index.html"><i class="bi bi-house-door"></i> 返回前台</a></li>
+          <li class="nav-item"><a class="nav-link text-warning" href="login.html"><i class="bi bi-box-arrow-right"></i> 退出</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4 py-3">
+
+    <h4 class="fw-bold mb-3"><i class="bi bi-calendar-check"></i> 预约管理</h4>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-3">
+          <label class="form-label text-small text-muted mb-1">状态</label>
+          <select class="form-select" id="statusFilter">
+            <option value="">全部</option>
+            <option value="已预约">已预约</option>
+            <option value="已取消">已取消</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label text-small text-muted mb-1">开始日期</label>
+          <input type="date" class="form-control" id="startDate">
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label text-small text-muted mb-1">结束日期</label>
+          <input type="date" class="form-control" id="endDate">
+        </div>
+        <div class="col-12 col-md-3">
+          <div class="d-flex gap-2">
+            <button class="btn btn-primary flex-fill" onclick="applyFilter()"><i class="bi bi-search"></i> 筛选</button>
+            <a href="reservations.html" class="btn btn-outline-secondary flex-fill"><i class="bi bi-arrow-counterclockwise"></i> 重置</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success state: has reservations -->
+    <div class="card" id="reservationTableCard">
+      <div class="table-responsive">
+        <table class="table table-admin mb-0">
+          <thead>
+            <tr><th>ID</th><th>用户</th><th>座位</th><th>日期</th><th>时段</th><th>状态</th><th>预约时间</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>张三</td><td>A-01</td><td>2026-07-06</td><td>09:00-11:00</td><td><span class="badge-status badge-reserved">已预约</span></td><td class="text-small text-muted">07-06 08:30</td></tr>
+            <tr><td>2</td><td>张三</td><td>B-02</td><td>2026-07-07</td><td>14:00-17:00</td><td><span class="badge-status badge-reserved">已预约</span></td><td class="text-small text-muted">07-05 10:15</td></tr>
+            <tr><td>3</td><td>李四</td><td>A-02</td><td>2026-07-06</td><td>10:00-12:00</td><td><span class="badge-status badge-reserved">已预约</span></td><td class="text-small text-muted">07-05 22:00</td></tr>
+            <tr><td>4</td><td>张三</td><td>C-01</td><td>2026-07-05</td><td>10:00-12:00</td><td><span class="badge-status badge-cancelled">已取消</span></td><td class="text-small text-muted">07-04 20:00</td></tr>
+            <tr><td>5</td><td>王五</td><td>B-01</td><td>2026-07-06</td><td>15:00-18:00</td><td><span class="badge-status badge-reserved">已预约</span></td><td class="text-small text-muted">07-06 09:00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty state (hidden by default) -->
+    <div class="empty-state d-none" id="emptyState">
+      <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+      <div class="empty-text">暂无匹配的预约记录</div>
+      <a href="reservations.html" class="btn btn-outline-primary"><i class="bi bi-arrow-counterclockwise"></i> 重置筛选</a>
+    </div>
+
+  </div>
+
+  <script>
+    function applyFilter() {
+      var status = document.getElementById('statusFilter').value;
+      var start = document.getElementById('startDate').value;
+      var end = document.getElementById('endDate').value;
+      if (status || start || end) {
+        document.getElementById('reservationTableCard').classList.add('d-none');
+        document.getElementById('emptyState').classList.remove('d-none');
+      } else {
+        document.getElementById('reservationTableCard').classList.remove('d-none');
+        document.getElementById('emptyState').classList.add('d-none');
+      }
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

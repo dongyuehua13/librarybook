@@ -1,0 +1,43 @@
+@model LibrarySeatSystem.Models.Seat
+@{
+    ViewData["Title"] = "新增座位";
+    Layout = "_AdminLayout";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> 新增座位</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">座位编号</label>
+                        <input asp-for="SeatNumber" class="form-control" placeholder="如 A-06" required />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">楼层</label>
+                            <input asp-for="Floor" class="form-control" type="number" min="1" value="1" />
+                        </div>
+                        <div class="col">
+                            <label class="form-label">区域</label>
+                            <input asp-for="Area" class="form-control" value="自习区" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">描述</label>
+                        <textarea asp-for="Description" class="form-control" rows="2" placeholder="位置特点说明"></textarea>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input asp-for="IsActive" class="form-check-input" checked />
+                        <label class="form-check-label">启用</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-check"></i> 保存</button>
+                    <a asp-action="Seats" class="btn btn-outline-secondary w-100 mt-2">返回</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+@{
+    ViewData["Title"] = "管理员登录";
+    Layout = "_Layout";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white text-center">
+                <h4 class="mb-0"><i class="bi bi-shield-lock"></i> 管理员登录</h4>
+            </div>
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(ViewBag.Error))
+                {
+                    <div class="alert alert-danger">@ViewBag.Error</div>
+                }
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">管理员账号</label>
+                        <input type="text" name="username" class="form-control" placeholder="输入管理员账号" required />
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100"><i class="bi bi-box-arrow-in-right"></i> 登录</button>
+                </form>
+                <div class="mt-3 text-muted small text-center">
+                    <p class="mb-0">提示：管理员账号为 <strong>admin</strong></p>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-primary mt-2">
+                        <i class="bi bi-arrow-left"></i> 返回首页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

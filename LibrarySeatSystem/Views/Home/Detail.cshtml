@@ -1,0 +1,92 @@
+@model LibrarySeatSystem.Models.Seat
+@{
+    ViewData["Title"] = "座位详情 - " + Model.SeatNumber;
+    var reservations = ViewBag.Reservations as List<LibrarySeatSystem.Models.Reservation> ?? new();
+    var userId = Context.Session.GetInt32("UserId");
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Seats">座位列表</a></li>
+        <li class="breadcrumb-item active">@Model.SeatNumber</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4 class="card-title">@Model.SeatNumber</h4>
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>楼层：</strong></td>
+                        <td>@Model.Floor 楼</td>
+                    </tr>
+                    <tr>
+                        <td><strong>区域：</strong></td>
+                        <td>@Model.Area</td>
+                    </tr>
+                    <tr>
+                        <td><strong>描述：</strong></td>
+                        <td>@(string.IsNullOrEmpty(Model.Description) ? "无" : Model.Description)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>状态：</strong></td>
+                        <td>
+                            @if (reservations.Any(r => r.Date >= DateTime.Today))
+                            {
+                                <span class="badge bg-warning text-dark">部分时段已预约</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">空闲</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+                <a asp-action="Reserve" asp-route-seatId="@Model.Id" class="btn btn-primary w-100 @(userId == null ? "disabled" : "")">
+                    <i class="bi bi-plus-circle"></i> 预约此座位
+                </a>
+                @if (userId == null)
+                {
+                    <div class="text-muted small mt-1 text-center">请先<a asp-action="SwitchUser">选择账号</a></div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-calendar3"></i> 预约记录</div>
+            <div class="card-body p-0">
+                @if (reservations.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>时段</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in reservations)
+                                {
+                                    <tr>
+                                        <td>@r.Date.ToString("yyyy-MM-dd")</td>
+                                        <td>@r.StartTime.ToString(@"hh\:mm") - @r.EndTime.ToString(@"hh\:mm")</td>
+                                        <td><span class="badge @(r.Status == "已预约" ? "bg-warning text-dark" : "bg-secondary")">@r.Status</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted p-3">暂无预约记录</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

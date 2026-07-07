@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑座位 - 管理后台</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../css/custom.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-sm navbar-admin">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fw-bold" href="seats.html"><i class="bi bi-shield-lock"></i> 管理后台</a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="adminNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link active" href="seats.html"><i class="bi bi-grid-3x3-gap"></i> 座位管理</a></li>
+          <li class="nav-item"><a class="nav-link" href="reservations.html"><i class="bi bi-calendar-check"></i> 预约管理</a></li>
+          <li class="nav-item"><a class="nav-link" href="stats.html"><i class="bi bi-bar-chart"></i> 数据统计</a></li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="../index.html"><i class="bi bi-house-door"></i> 返回前台</a></li>
+          <li class="nav-item"><a class="nav-link text-warning" href="login.html"><i class="bi bi-box-arrow-right"></i> 退出</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4 py-3">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-6 col-lg-5">
+
+        <div class="card">
+          <div class="card-header-custom bg-warning text-dark">
+            <h5 class="mb-0"><i class="bi bi-pencil"></i> 编辑座位 A-01</h5>
+          </div>
+          <div class="card-body">
+            <form onsubmit="return handleEdit(event)">
+              <div class="mb-3">
+                <label class="form-label text-small fw-medium">座位编号 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" value="A-01" required>
+              </div>
+              <div class="row mb-3">
+                <div class="col-6">
+                  <label class="form-label text-small fw-medium">楼层</label>
+                  <input type="number" class="form-control" value="1" min="1">
+                </div>
+                <div class="col-6">
+                  <label class="form-label text-small fw-medium">区域</label>
+                  <input type="text" class="form-control" value="自习区">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-small fw-medium">描述</label>
+                <textarea class="form-control" rows="2">靠窗位置，有插座</textarea>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" checked id="isActive">
+                <label class="form-check-label text-small" for="isActive">启用</label>
+              </div>
+              <button type="submit" class="btn btn-warning w-100"><i class="bi bi-save"></i> 更新</button>
+              <a href="seats.html" class="btn btn-outline-secondary w-100 mt-2">取消</a>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleEdit(e) {
+      e.preventDefault();
+      window.location.href = 'seats.html';
+      return false;
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

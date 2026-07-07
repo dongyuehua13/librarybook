@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "首页";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center">
+                <h1 class="card-title">图书馆座位预约系统</h1>
+                <p class="card-text text-muted">选择学生账号进入体验，或使用管理员账号登录管理端</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.CurrentUserId == null)
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header"><strong>选择体验账号</strong></div>
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-md-3 g-3">
+                        @foreach (var student in ViewBag.Students)
+                        {
+                            <div class="col">
+                                <form method="post" action="/Home/SwitchUser">
+                                    <input type="hidden" name="userId" value="@student.Id" />
+                                    <button type="submit" class="btn btn-outline-primary w-100 py-3">
+                                        <strong>@student.DisplayName</strong><br />
+                                        <small class="text-muted">@@@student.Username</small>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="/Admin/Login" class="btn btn-dark">管理员登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success">
+                当前已切换为 <strong>@ViewBag.CurrentUserName</strong>
+                <form method="post" action="/Home/SwitchUser" class="d-inline">
+                    <button type="submit" name="userId" value="" class="btn btn-sm btn-outline-secondary ms-2">退出</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h5 class="card-title">总座位数</h5>
+                <p class="display-6 text-primary">@ViewBag.TotalSeats</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h5 class="card-title">可用座位</h5>
+                <p class="display-6 text-success">@ViewBag.ActiveSeats</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <h5 class="card-title">今日预约</h5>
+                <p class="display-6 text-info">@ViewBag.TodayReservations</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.AreaDistribution != null)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header"><strong>区域分布</strong></div>
+                <div class="card-body">
+                    <div class="row row-cols-1 row-cols-md-3 g-3">
+                        @foreach (var kv in ViewBag.AreaDistribution)
+                        {
+                            <div class="col">
+                                <div class="border rounded p-3 text-center">
+                                    <h6>@kv.Key</h6>
+                                    <span class="badge bg-primary fs-5">@kv.Value 个座位</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
