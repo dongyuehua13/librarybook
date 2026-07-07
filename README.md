@@ -1,6 +1,6 @@
 # 图书馆座位预约系统
 
-> 单人课堂实训项目 · ASP.NET Core MVC (.NET 10) · SQL Server LocalDB · Bootstrap 5  
+> 单人课堂实训项目 · ASP.NET Core MVC (.NET 8) · SQL Server LocalDB · Bootstrap 5  
 > GitHub：https://github.com/dongyuehua13/librarybook
 
 学生在线查座位、预约时段、取消预约；管理员后台管理座位、查看预约和统计数据。
@@ -11,9 +11,9 @@
 
 | 层 | 技术 |
 |------|------|
-| 框架 | ASP.NET Core MVC (.NET 10) |
+| 框架 | ASP.NET Core MVC (.NET 8) |
 | 视图 | Razor (.cshtml) + Bootstrap 5 |
-| 数据访问 | Entity Framework Core 10.x (Code First + Migrations) |
+| 数据访问 | Entity Framework Core 8.x (Code First + EnsureCreated) |
 | 数据库 | SQL Server LocalDB (MSSQLLocalDB) |
 | 前端交互 | jQuery + AJAX |
 
@@ -27,44 +27,46 @@
 > 标注「◇ 计划中」为后续 Sprint 计划生成的产物。
 
 ```
-LibrarySeatReservation.sln          ← 解决方案文件（✓ 已有）
-src/
-└── LibrarySeatReservation.Web/      ← ASP.NET Core MVC 项目根（✓ 已有）
-    ├── Controllers/                  ✓ 已有
-    │   ├── HomeController.cs         首页 + 切换账号
-    │   └── AdminController.cs        管理员登录/退出
-    ├── Models/                       ✓ 已有（3 实体）
-    │   ├── User.cs                   用户
-    │   ├── Seat.cs                   座位
-    │   ├── Reservation.cs            预约记录
-    │   └── ErrorViewModel.cs
-    ├── ViewModels/                   ◇ 计划中（Sprint 1/2 填充）
-    ├── Services/                     ✓ 已有（Sprint 0 新建）
-    │   ├── Interfaces/
-    │   │   ├── ISeatService.cs
-    │   │   ├── IReservationService.cs
-    │   │   ├── IStatsService.cs
-    │   │   └── IUserService.cs
-    │   ├── SeatService.cs
-    │   ├── ReservationService.cs
-    │   ├── StatsService.cs
-    │   └── UserService.cs
-    ├── Data/                         ✓ 已有
-    │   ├── AppDbContext.cs           EF Core DbContext
-    │   └── DbInitializer.cs         种子数据
-    ├── Filters/                      ✓ 已有
-    │   └── AdminAuthFilter.cs       管理员认证过滤器
-    ├── Migrations/                   ✓ 已有
-    │   └── *_InitialCreate.cs        EF Core 首次迁移
-    ├── Views/                        ✓ 已有（占位页 + 首页 + 登录页）
-    │   ├── Home/                     Index / Seats(占位) / MyReservations(占位)
-    │   ├── Admin/                    Login
-    │   └── Shared/                   _Layout / _AdminLayout / Error
-    ├── wwwroot/                      ✓ 已有（Bootstrap 离线资源）
-    ├── Program.cs                    ✓ 已有
-    └── appsettings.json              ✓ 已有
-docs/                               ← 设计文档目录（✓ 已有）
-prototype/                          ← 原型目录（✓ 已有）
+LibrarySeatSystem/                   ← ASP.NET Core MVC 项目根（✓ 已有）
+├── Controllers/                      ✓ 已有
+│   ├── HomeController.cs            首页 + 切换账号
+│   └── AdminController.cs           管理员登录/退出
+├── Models/                           ✓ 已有（3 实体）
+│   ├── User.cs                      用户
+│   ├── Seat.cs                      座位
+│   ├── Reservation.cs               预约记录
+│   └── ErrorViewModel.cs
+├── ViewModels/                       ✓ 已有（Sprint 0 产出）
+│   ├── HomeIndexViewModel.cs
+│   ├── SeatWithStatus.cs
+│   ├── SeatDetailViewModel.cs
+│   ├── MyReservationsViewModel.cs
+│   ├── AdminReservationsViewModel.cs
+│   └── AdminStatsViewModel.cs
+├── Services/                         ✓ 已有（Sprint 0 产出）
+│   ├── ISeatService.cs
+│   ├── IReservationService.cs
+│   ├── IStatsService.cs
+│   ├── IUserService.cs
+│   ├── SeatService.cs
+│   ├── ReservationService.cs
+│   ├── StatsService.cs
+│   └── UserService.cs
+├── Data/                             ✓ 已有
+│   ├── AppDbContext.cs               EF Core DbContext
+│   └── DbInitializer.cs             种子数据
+├── Filters/                          ✓ 已有
+│   └── AdminAuthFilter.cs           管理员认证过滤器
+├── Views/                            ✓ 已有
+│   ├── Home/                         Index / Seats / Detail / Reserve / MyReservations / SwitchUser
+│   ├── Admin/                        Login / Seats / SeatCreate / SeatEdit / Reservations / Stats
+│   └── Shared/                       _Layout / _AdminLayout / Error
+├── wwwroot/                          ✓ 已有（Bootstrap 离线资源）
+├── Program.cs                        ✓ 已有
+├── appsettings.json                  ✓ 已有
+└── LibrarySeatSystem.csproj          ✓ 已有
+docs/                                ← 设计文档目录（✓ 已有）
+prototype/                           ← 原型目录（✓ 已有）
 ```
 
 ---
@@ -92,7 +94,7 @@ prototype/                          ← 原型目录（✓ 已有）
 **当前仓库已有（Sprint 0 产出）：**
 - ✓ 分层架构骨架（Controllers / Services / Models / Data / Filters / Views）
 - ✓ EF Core 迁移 + 自动建库建表（Users / Seats / Reservations 三表，含 FK + 索引）
-- ✓ 种子数据（4 个用户：admin + zhangsan/lisi/wangwu；45 个座位：3层×3区域×5）
+- ✓ 种子数据（4 个用户：admin + zhangsan/lisi/wangwu；15 个座位：A-01~A-05 1F自习区 / B-01~B-05 2F安静区 / C-01~C-05 3F电子阅览区）
 - ✓ Service 层 4 接口 + 4 实现（含预约业务规则骨架）
 - ✓ 首页统计概览 + 切换体验账号 + 管理员登录
 - ✓ AdminAuthFilter（管理端认证拦截过滤器）
@@ -113,7 +115,7 @@ prototype/                          ← 原型目录（✓ 已有）
 ## 运行前提
 
 - Windows 系统（LocalDB 仅 Windows 可用）
-- .NET 10 SDK（`dotnet --list-sdks` 确认存在）
+- .NET 8 SDK（`dotnet --list-sdks` 确认存在）
 - SQL Server LocalDB（`sqllocaldb info MSSQLLocalDB` 确认可用）
 - Git（`git --version` 确认已安装）
 
@@ -127,7 +129,7 @@ git clone https://github.com/dongyuehua13/librarybook.git
 cd librarybook
 
 # 2. 进入项目目录
-cd src/LibrarySeatReservation.Web
+cd LibrarySeatSystem
 
 # 3. 还原 NuGet 包
 dotnet restore
@@ -135,13 +137,10 @@ dotnet restore
 # 4. 首次构建
 dotnet build
 
-# 5. 应用迁移（首次建库建表）
-dotnet ef database update
-
-# 6. 运行（自动写入种子数据）
+# 5. 首次运行（自动建库建表 + 写入种子数据）
 dotnet run --urls "http://localhost:5002"
 
-# 7. 浏览器打开
+# 6. 浏览器打开
 # 用户端首页：http://localhost:5002
 # 管理员登录：http://localhost:5002/Admin/Login
 ```
@@ -150,17 +149,22 @@ dotnet run --urls "http://localhost:5002"
 
 ## 数据库初始化方式
 
-系统使用 **Code First + EF Core Migrations** 建库，首次启动需手动执行 `dotnet ef database update` 创建数据库和表。
+系统使用 **Code First + EnsureCreated()** 自动建库，首次 `dotnet run` 时自动创建数据库和表，无需手动执行迁移命令。
 
 Program.cs 中启动时自动流程：
-1. `db.Database.Migrate()` → 应用所有待处理迁移
+1. `db.Database.EnsureCreated()` → 库不存在时创建库和所有表
 2. `DbInitializer.Seed(db)` → Users 表为空时写入种子数据
 
-如需手动重建数据库：
-```bash
-dotnet ef database drop           # 删除数据库
-dotnet ef database update         # 重新建库建表
-```
+> ⚠️ `EnsureCreated()` 不支持增量表结构变更。如需修改表结构，需先手动删除数据库再重启：
+> ```bash
+> dotnet run                                   # 启动后访问任意页面触发建库
+> # 或手动删除 LocalDB:
+> sqllocaldb stop MSSQLLocalDB
+> sqllocaldb delete MSSQLLocalDB
+> dotnet run
+> ```
+>
+> 本设计为课堂实训约定，不用于生产环境。
 
 ---
 

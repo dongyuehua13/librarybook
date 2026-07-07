@@ -11,7 +11,6 @@
 ```
 librarybook/                    ← Git 仓库根目录（GitHub: dongyuehua13/librarybook）
 ├── .gitignore                  ← 忽略 bin/obj/.vs/*.user/appsettings.Development.json
-├── LibrarySeatReservation.sln  ← 解决方案文件（✓ 已有）
 ├── README.md                   ← 项目简介（随 Sprint 持续更新）
 ├── docs/                       ← 全部设计文档
 │   ├── 01-项目立项单.md
@@ -32,20 +31,18 @@ librarybook/                    ← Git 仓库根目录（GitHub: dongyuehua13/l
 │   └── static-v1/
 │       ├── *.html
 │       └── css/custom.css
-└── src/                         ← 源码目录
-    └── LibrarySeatReservation.Web/  ← ASP.NET Core MVC 项目根（✓ 已有）
-        ├── Controllers/         ✓ 已有（注入 Service 调用）
-        ├── Models/              ✓ 已有（3 实体）
-        ├── ViewModels/          ◇ 计划中（Sprint 1/2 填充）
-        ├── Services/            ✓ 已有（Sprint 0 产出）
-        ├── Data/                ✓ 已有（DbContext + 种子数据）
-        ├── Filters/             ✓ 已有（AdminAuthFilter）
-        ├── Migrations/          ✓ 已有（EF Core 首次迁移）
-        ├── Views/               ✓ 已有（首页 + 管理登录 + 占位页）
-        ├── wwwroot/             ✓ 已有（Bootstrap 离线资源）
-        ├── Program.cs           ✓ 已有（DI + Session + Migrate + Seed）
-        ├── appsettings.json     ✓ 已有
-        └── LibrarySeatReservation.Web.csproj ✓ 已有
+└── LibrarySeatSystem/           ← ASP.NET Core MVC 项目根（✓ 已有）
+    ├── Controllers/             ✓ 已有（注入 Service 调用）
+    ├── Models/                  ✓ 已有（3 实体）
+    ├── ViewModels/              ✓ 已有（Sprint 0 产出）
+    ├── Services/                ✓ 已有（Sprint 0 产出）
+    ├── Data/                    ✓ 已有（DbContext + 种子数据）
+    ├── Filters/                 ✓ 已有（AdminAuthFilter）
+    ├── Views/                   ✓ 已有（已实现页面）
+    ├── wwwroot/                 ✓ 已有（Bootstrap 离线资源）
+    ├── Program.cs               ✓ 已有（DI + Session + EnsureCreated + Seed）
+    ├── appsettings.json         ✓ 已有
+    └── LibrarySeatSystem.csproj ✓ 已有
 ```
 
 ---
