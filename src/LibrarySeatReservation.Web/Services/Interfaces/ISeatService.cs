@@ -6,6 +6,7 @@ namespace LibrarySeatReservation.Web.Services.Interfaces;
 public interface ISeatService
 {
     Task<List<Seat>> GetAllAsync();
+    Task<List<Seat>> GetAllSeatsAsync();
     Task<List<Seat>> GetSeatsByFloorAsync(int floor);
     Task<Seat?> GetByIdAsync(int id);
     Task<Seat?> GetSeatByIdAsync(int id);

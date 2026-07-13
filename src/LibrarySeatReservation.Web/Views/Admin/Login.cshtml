@@ -1,4 +1,3 @@
-@model dynamic
 @{
     ViewData["Title"] = "管理员登录";
     Layout = "_Layout";
@@ -9,9 +8,12 @@
         <div class="card">
             <div class="card-header"><strong>管理员登录</strong></div>
             <div class="card-body">
-                @if (ViewBag.Error != null)
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="alert alert-danger">@ViewBag.Error</div>
+                    foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div class="alert alert-danger">@error.ErrorMessage</div>
+                    }
                 }
                 <form method="post">
                     <div class="mb-3">

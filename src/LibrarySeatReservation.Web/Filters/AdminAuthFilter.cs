@@ -7,10 +7,19 @@ public class AdminAuthFilter : IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var isAdmin = context.HttpContext.Session.GetString("IsAdmin");
-        if (isAdmin != "true")
+        if (context.HttpContext.Session.GetInt32("AdminId") == null)
         {
-            context.Result = new RedirectToActionResult("Login", "Admin", null);
+            if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                context.Result = new JsonResult(new { success = false, message = "登录已过期" })
+                {
+                    StatusCode = 401
+                };
+            }
+            else
+            {
+                context.Result = new RedirectToActionResult("Login", "Admin", null);
+            }
         }
     }
 }

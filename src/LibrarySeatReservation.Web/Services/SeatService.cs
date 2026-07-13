@@ -20,6 +20,11 @@ public class SeatService : ISeatService
         return await _db.Seats.OrderBy(s => s.Floor).ThenBy(s => s.SeatNumber).ToListAsync();
     }
 
+    public async Task<List<Seat>> GetAllSeatsAsync()
+    {
+        return await _db.Seats.OrderBy(s => s.SeatNumber).ToListAsync();
+    }
+
     public async Task<List<Seat>> GetSeatsByFloorAsync(int floor)
     {
         return await _db.Seats.Where(s => s.Floor == floor).OrderBy(s => s.SeatNumber).ToListAsync();
