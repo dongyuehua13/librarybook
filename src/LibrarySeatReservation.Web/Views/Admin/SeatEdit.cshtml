@@ -1,0 +1,46 @@
+@model Seat
+@{
+    ViewData["Title"] = "编辑座位";
+    Layout = "_AdminLayout";
+}
+
+<h4 class="mb-3">编辑座位</h4>
+
+<div class="card">
+    <div class="card-body">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div class="alert alert-danger">@error.ErrorMessage</div>
+            }
+        }
+        <form method="post" class="row g-3" style="max-width: 480px;">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="col-12">
+                <label class="form-label">座位编号 <span class="text-danger">*</span></label>
+                <input type="text" name="SeatNumber" class="form-control" value="@Model.SeatNumber" required maxlength="50" />
+            </div>
+            <div class="col-6">
+                <label class="form-label">楼层</label>
+                <input type="number" name="Floor" class="form-control" value="@Model.Floor" min="1" max="10" />
+            </div>
+            <div class="col-6">
+                <label class="form-label">区域</label>
+                <select name="Area" class="form-select">
+                    <option value="自习区" selected="@(Model.Area == "自习区")">自习区</option>
+                    <option value="安静区" selected="@(Model.Area == "安静区")">安静区</option>
+                    <option value="电子阅览区" selected="@(Model.Area == "电子阅览区")">电子阅览区</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label">描述</label>
+                <input type="text" name="Description" class="form-control" value="@Model.Description" maxlength="200" />
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">保存</button>
+                <a href="/Admin/Seats" class="btn btn-outline-secondary ms-2">取消</a>
+            </div>
+        </form>
+    </div>
+</div>

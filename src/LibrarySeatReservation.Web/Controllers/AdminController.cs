@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using LibrarySeatReservation.Web.Filters;
+using LibrarySeatReservation.Web.Models;
 using LibrarySeatReservation.Web.Services.Interfaces;
 
 namespace LibrarySeatReservation.Web.Controllers;
@@ -9,11 +10,19 @@ public class AdminController : Controller
 {
     private readonly IUserService _userService;
     private readonly ISeatService _seatService;
+    private readonly IReservationService _reservationService;
+    private readonly IStatsService _statsService;
 
-    public AdminController(IUserService userService, ISeatService seatService)
+    public AdminController(
+        IUserService userService,
+        ISeatService seatService,
+        IReservationService reservationService,
+        IStatsService statsService)
     {
         _userService = userService;
         _seatService = seatService;
+        _reservationService = reservationService;
+        _statsService = statsService;
     }
 
     public IActionResult Login()
@@ -67,5 +76,61 @@ public class AdminController : Controller
 
         await _seatService.ToggleActiveAsync(id);
         return Json(new { success = true, isActive = seat.IsActive });
+    }
+
+    public IActionResult SeatCreate()
+    {
+        return View(new Seat());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SeatCreate(Seat model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var result = await _seatService.CreateSeatAsync(model);
+        if (!result.Success)
+        {
+            ModelState.AddModelError("", result.Message);
+            return View(model);
+        }
+
+        return RedirectToAction("Seats");
+    }
+
+    public async Task<IActionResult> SeatEdit(int id)
+    {
+        var seat = await _seatService.GetSeatByIdAsync(id);
+        if (seat == null) return NotFound();
+        return View(seat);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SeatEdit(Seat model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var result = await _seatService.UpdateSeatAsync(model);
+        if (!result.Success)
+        {
+            ModelState.AddModelError("", result.Message);
+            return View(model);
+        }
+
+        return RedirectToAction("Seats");
+    }
+
+    public async Task<IActionResult> Reservations(string? status, DateOnly? dateFrom, DateOnly? dateTo)
+    {
+        var viewModel = await _reservationService.GetAllReservationsAsync(status, dateFrom, dateTo);
+        return View(viewModel);
+    }
+
+    public async Task<IActionResult> Stats()
+    {
+        var stats = await _statsService.GetAllStatsAsync();
+        return View(stats);
     }
 }

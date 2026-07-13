@@ -136,4 +136,35 @@ public class ReservationService : IReservationService
         await _db.SaveChangesAsync();
         return (true, "取消成功");
     }
+
+    public async Task<AdminReservationsViewModel> GetAllReservationsAsync(string? status, DateOnly? dateFrom, DateOnly? dateTo)
+    {
+        var query = _db.Reservations
+            .Include(r => r.User)
+            .Include(r => r.Seat)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(status))
+            query = query.Where(r => r.Status == status);
+        if (dateFrom.HasValue)
+            query = query.Where(r => r.Date >= dateFrom.Value);
+        if (dateTo.HasValue)
+            query = query.Where(r => r.Date <= dateTo.Value);
+
+        var records = await query.OrderByDescending(r => r.CreatedAt).ToListAsync();
+
+        return new AdminReservationsViewModel
+        {
+            Items = records.Select(r => new AdminReservationItem
+            {
+                Id = r.Id,
+                UserName = r.User.DisplayName,
+                SeatNumber = r.Seat.SeatNumber,
+                Date = r.Date,
+                TimeSlot = $"{r.StartTime:hh\\:mm} - {r.EndTime:hh\\:mm}",
+                Status = r.Status,
+                CreatedAt = r.CreatedAt
+            }).ToList()
+        };
+    }
 }

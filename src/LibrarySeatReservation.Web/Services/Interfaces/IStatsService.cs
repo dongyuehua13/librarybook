@@ -8,4 +8,5 @@ public interface IStatsService
     Task<int> GetActiveSeatCountAsync();
     Task<Dictionary<string, int>> GetAreaDistributionAsync();
     Task<DashboardStats> GetDashboardStatsAsync();
+    Task<AdminStats> GetAllStatsAsync();
 }

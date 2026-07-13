@@ -13,6 +13,10 @@ public interface ISeatService
     Task ToggleActiveAsync(int id);
     Task<Seat> CreateAsync(Seat seat);
 
+    Task<(bool Success, string Message)> CreateSeatAsync(Seat seat);
+    Task<(bool Success, string Message)> UpdateSeatAsync(Seat seat);
+    Task SaveChangesAsync();
+
     Task<List<SeatWithStatus>> GetSeatsWithStatusAsync(int? floor, string? area);
     Task<SeatDetailViewModel?> GetSeatDetailAsync(int id);
 }

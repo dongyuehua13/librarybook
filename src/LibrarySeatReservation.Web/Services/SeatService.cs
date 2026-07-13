@@ -57,6 +57,42 @@ public class SeatService : ISeatService
         return seat;
     }
 
+    public async Task<(bool Success, string Message)> CreateSeatAsync(Seat seat)
+    {
+        var exists = await _db.Seats.AnyAsync(s => s.SeatNumber == seat.SeatNumber);
+        if (exists)
+            return (false, "座位编号已存在");
+
+        _db.Seats.Add(seat);
+        await _db.SaveChangesAsync();
+        return (true, "新增成功");
+    }
+
+    public async Task<(bool Success, string Message)> UpdateSeatAsync(Seat seat)
+    {
+        var existing = await _db.Seats.FindAsync(seat.Id);
+        if (existing == null)
+            return (false, "座位不存在");
+
+        var duplicate = await _db.Seats.AnyAsync(s =>
+            s.SeatNumber == seat.SeatNumber && s.Id != seat.Id);
+        if (duplicate)
+            return (false, "座位编号已被其他座位使用");
+
+        existing.SeatNumber = seat.SeatNumber;
+        existing.Floor = seat.Floor;
+        existing.Area = seat.Area;
+        existing.Description = seat.Description;
+
+        await _db.SaveChangesAsync();
+        return (true, "更新成功");
+    }
+
+    public async Task SaveChangesAsync()
+    {
+        await _db.SaveChangesAsync();
+    }
+
     public async Task<List<SeatWithStatus>> GetSeatsWithStatusAsync(int? floor, string? area)
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
