@@ -48,11 +48,11 @@ else
                         <td>
                             @if (item.Status == "已预约")
                             {
-                                <span class="badge bg-primary">已预约</span>
+                                <span class="badge bg-danger">已预约</span>
                             }
                             else
                             {
-                                <span class="badge bg-secondary">@item.Status</span>
+                                <span class="badge bg-secondary">已取消</span>
                             }
                         </td>
                         <td class="text-muted small">@item.CreatedAt.ToString("MM-dd HH:mm")</td>

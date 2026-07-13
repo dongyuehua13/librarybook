@@ -48,7 +48,7 @@ else
                                 }
                                 else
                                 {
-                                    <span class="badge bg-secondary seat-status-@seat.Id">禁用</span>
+                                    <span class="badge bg-danger seat-status-@seat.Id">禁用</span>
                                 }
                             </td>
                             <td>
@@ -70,13 +70,13 @@ else
         function toggleSeat(id) {
             $.post('/Admin/SeatToggle', { id: id }, function (result) {
                 if (result.success) {
-                    var badge = $('.seat-status-' + id);
+                        var badge = $('.seat-status-' + id);
                     var btn = badge.closest('tr').find('button');
                     if (result.isActive) {
-                        badge.removeClass('bg-secondary').addClass('bg-success').text('启用');
+                        badge.removeClass('bg-danger').addClass('bg-success').text('启用');
                         btn.removeClass('btn-success').addClass('btn-warning').text('禁用');
                     } else {
-                        badge.removeClass('bg-success').addClass('bg-secondary').text('禁用');
+                        badge.removeClass('bg-success').addClass('bg-danger').text('禁用');
                         btn.removeClass('btn-warning').addClass('btn-success').text('启用');
                     }
                 } else {

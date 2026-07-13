@@ -15,10 +15,11 @@
                         <div class="alert alert-danger">@error.ErrorMessage</div>
                     }
                 }
-                <form method="post">
+                <form method="post" class="needs-validation" novalidate>
                     <div class="mb-3">
                         <label class="form-label">用户名</label>
                         <input type="text" name="username" class="form-control" placeholder="请输入管理员用户名" required />
+                        <div class="invalid-feedback">请输入管理员用户名</div>
                     </div>
                     <button type="submit" class="btn btn-dark w-100">登录</button>
                 </form>
@@ -29,3 +30,21 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            'use strict';
+            var forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    </script>
+}

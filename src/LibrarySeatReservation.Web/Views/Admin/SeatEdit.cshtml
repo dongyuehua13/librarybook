@@ -15,15 +15,17 @@
                 <div class="alert alert-danger">@error.ErrorMessage</div>
             }
         }
-        <form method="post" class="row g-3" style="max-width: 480px;">
+        <form method="post" class="row g-3 needs-validation" style="max-width: 480px;" novalidate>
             <input type="hidden" name="Id" value="@Model.Id" />
             <div class="col-12">
                 <label class="form-label">座位编号 <span class="text-danger">*</span></label>
                 <input type="text" name="SeatNumber" class="form-control" value="@Model.SeatNumber" required maxlength="50" />
+                <div class="invalid-feedback">请输入座位编号</div>
             </div>
             <div class="col-6">
                 <label class="form-label">楼层</label>
                 <input type="number" name="Floor" class="form-control" value="@Model.Floor" min="1" max="10" />
+                <div class="invalid-feedback">楼层范围 1-10</div>
             </div>
             <div class="col-6">
                 <label class="form-label">区域</label>
@@ -44,3 +46,9 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () { 'use strict'; var forms = document.querySelectorAll('.needs-validation'); Array.prototype.slice.call(forms).forEach(function (form) { form.addEventListener('submit', function (event) { if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); })();
+    </script>
+}

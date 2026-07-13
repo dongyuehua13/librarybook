@@ -37,20 +37,23 @@
                     }
                 </table>
 
-                <form id="reserveForm">
+                <form id="reserveForm" class="needs-validation" novalidate>
                     <input type="hidden" name="seatId" value="@Model.Id" />
                     <div class="mb-3">
                         <label class="form-label">预约日期</label>
                         <input type="date" name="date" class="form-control" min="@today" value="@today" required />
+                        <div class="invalid-feedback">请选择预约日期</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">开始时间</label>
                         <input type="time" name="startTime" class="form-control" value="09:00" min="08:00" max="21:00" step="3600" required />
+                        <div class="invalid-feedback">请选择开始时间</div>
                         <div class="form-text">可选 08:00 ~ 21:00，整点开始</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">结束时间</label>
                         <input type="time" name="endTime" class="form-control" value="10:00" min="09:00" max="22:00" step="3600" required />
+                        <div class="invalid-feedback">请选择结束时间</div>
                         <div class="form-text">最晚 22:00 结束，时长 1~4 小时</div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">提交预约</button>
@@ -63,6 +66,12 @@
 @section Scripts {
     <script>
         document.getElementById('reserveForm').addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.classList.add('was-validated');
+                return;
+            }
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             const notif = document.getElementById('notification');
