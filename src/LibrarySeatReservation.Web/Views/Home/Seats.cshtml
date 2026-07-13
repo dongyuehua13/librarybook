@@ -1,6 +1,86 @@
+@model List<SeatWithStatus>
 @{
     ViewData["Title"] = "座位列表";
+    var floors = new[] { 1, 2, 3 };
+    var areas = new[] { "自习区", "安静区", "电子阅览区" };
+    var currentFloor = Context.Request.Query["floor"];
+    var currentArea = Context.Request.Query["area"];
 }
 
-<h2>座位列表</h2>
-<p class="text-muted">功能开发中，请期待下一迭代。</p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">首页</a></li>
+        <li class="breadcrumb-item active">座位列表</li>
+    </ol>
+</nav>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" action="/Home/Seats" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">楼层</label>
+                <select name="floor" class="form-select">
+                    <option value="">全部楼层</option>
+                    @foreach (var f in floors)
+                    {
+                        <option value="@f" selected="@(currentFloor == f.ToString())">@f 楼</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">区域</label>
+                <select name="area" class="form-select">
+                    <option value="">全部区域</option>
+                    @foreach (var a in areas)
+                    {
+                        <option value="@a" selected="@(currentArea == a)">@a</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">筛选</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <h5 class="text-muted">暂无符合条件的座位</h5>
+            <a href="/Home/Seats" class="btn btn-outline-primary mt-2">重置筛选</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+        @foreach (var seat in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">@seat.SeatNumber</h5>
+                            @if (seat.IsOccupied)
+                            {
+                                <span class="badge bg-secondary">已预约</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">空闲</span>
+                            }
+                        </div>
+                        <p class="card-text small text-muted mb-1">@seat.Floor 楼 · @seat.Area</p>
+                        @if (!string.IsNullOrEmpty(seat.Description))
+                        {
+                            <p class="card-text small text-muted">@seat.Description</p>
+                        }
+                        <a href="/Home/Detail/@seat.Id" class="btn btn-sm btn-outline-primary mt-2">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

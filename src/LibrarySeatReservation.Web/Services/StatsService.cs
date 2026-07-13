@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using LibrarySeatReservation.Web.Data;
 using LibrarySeatReservation.Web.Services.Interfaces;
+using LibrarySeatReservation.Web.ViewModels;
 
 namespace LibrarySeatReservation.Web.Services;
 
@@ -30,5 +31,15 @@ public class StatsService : IStatsService
             .GroupBy(s => s.Area)
             .Select(g => new { Area = g.Key, Count = g.Count() })
             .ToDictionaryAsync(x => x.Area, x => x.Count);
+    }
+
+    public async Task<DashboardStats> GetDashboardStatsAsync()
+    {
+        return new DashboardStats
+        {
+            TotalActiveSeats = await GetActiveSeatCountAsync(),
+            TodayReservations = await GetTodayReservationCountAsync(),
+            AreaDistribution = await GetAreaDistributionAsync()
+        };
     }
 }

@@ -16,18 +16,39 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        @if (ViewBag.CurrentUserId != null)
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Home/Seats">浏览座位</a>
+                        </li>
+                        @if (Context.Session.GetInt32("UserId") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Home/MyReservations">我的预约</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        @{
+                            var userId = Context.Session.GetInt32("UserId");
+                            var userName = Context.Session.GetString("UserName");
+                            var isAdmin = Context.Session.GetString("IsAdmin") == "true";
+                        }
+                        @if (userId != null)
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    @ViewBag.CurrentUserName
+                                    @userName
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="/">首页</a></li>
-                                    @if (Context.Session.GetString("IsAdmin") == "true")
+                                    <li><a class="dropdown-item" href="/">切换账号</a></li>
+                                    @if (isAdmin)
                                     {
                                         <li><a class="dropdown-item" href="/Admin/Logout">管理端退出</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="/Home/Logout">退出</a></li>
                                     }
                                 </ul>
                             </li>
@@ -35,7 +56,10 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link" href="/Admin/Login">管理员登录</a>
+                                <a class="nav-link" href="/">选择账号</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/Login">管理后台</a>
                             </li>
                         }
                     </ul>

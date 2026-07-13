@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using LibrarySeatReservation.Web.Data;
 using LibrarySeatReservation.Web.Models;
 using LibrarySeatReservation.Web.Services.Interfaces;
+using LibrarySeatReservation.Web.ViewModels;
 
 namespace LibrarySeatReservation.Web.Services;
 
@@ -19,7 +20,7 @@ public class SeatService : ISeatService
         return await _db.Seats.OrderBy(s => s.Floor).ThenBy(s => s.SeatNumber).ToListAsync();
     }
 
-    public async Task<List<Seat>> GetByFloorAsync(int floor)
+    public async Task<List<Seat>> GetSeatsByFloorAsync(int floor)
     {
         return await _db.Seats.Where(s => s.Floor == floor).OrderBy(s => s.SeatNumber).ToListAsync();
     }
@@ -27,6 +28,11 @@ public class SeatService : ISeatService
     public async Task<Seat?> GetByIdAsync(int id)
     {
         return await _db.Seats.FindAsync(id);
+    }
+
+    public async Task<Seat?> GetSeatByIdAsync(int id)
+    {
+        return await _db.Seats.FirstOrDefaultAsync(s => s.Id == id);
     }
 
     public async Task ToggleActiveAsync(int id)
@@ -44,5 +50,63 @@ public class SeatService : ISeatService
         _db.Seats.Add(seat);
         await _db.SaveChangesAsync();
         return seat;
+    }
+
+    public async Task<List<SeatWithStatus>> GetSeatsWithStatusAsync(int? floor, string? area)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var reservedSeatIds = await _db.Reservations
+            .Where(r => r.Date == today && r.Status == "已预约")
+            .Select(r => r.SeatId)
+            .Distinct()
+            .ToListAsync();
+
+        var query = _db.Seats.Where(s => s.IsActive);
+        if (floor.HasValue)
+            query = query.Where(s => s.Floor == floor.Value);
+        if (!string.IsNullOrEmpty(area))
+            query = query.Where(s => s.Area == area);
+
+        var seats = await query.OrderBy(s => s.SeatNumber).ToListAsync();
+
+        return seats.Select(s => new SeatWithStatus
+        {
+            Id = s.Id,
+            SeatNumber = s.SeatNumber,
+            Floor = s.Floor,
+            Area = s.Area,
+            Description = s.Description,
+            IsOccupied = reservedSeatIds.Contains(s.Id)
+        }).ToList();
+    }
+
+    public async Task<SeatDetailViewModel?> GetSeatDetailAsync(int id)
+    {
+        var seat = await _db.Seats.FirstOrDefaultAsync(s => s.Id == id);
+        if (seat == null) return null;
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var records = await _db.Reservations
+            .Where(r => r.SeatId == id && r.Date >= today)
+            .OrderBy(r => r.Date)
+            .ThenBy(r => r.StartTime)
+            .ToListAsync();
+
+        return new SeatDetailViewModel
+        {
+            Id = seat.Id,
+            SeatNumber = seat.SeatNumber,
+            Floor = seat.Floor,
+            Area = seat.Area,
+            Description = seat.Description,
+            IsActive = seat.IsActive,
+            ReservationRecords = records.Select(r => new ReservationBrief
+            {
+                Date = r.Date,
+                StartTime = r.StartTime,
+                EndTime = r.EndTime,
+                Status = r.Status
+            }).ToList()
+        };
     }
 }

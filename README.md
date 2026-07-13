@@ -1,6 +1,6 @@
 # 图书馆座位预约系统
 
-> 单人课堂实训项目 · ASP.NET Core MVC (.NET 8) · SQL Server LocalDB · Bootstrap 5  
+> 单人课堂实训项目 · ASP.NET Core MVC (net10.0) · SQL Server LocalDB · Bootstrap 5  
 > GitHub：https://github.com/dongyuehua13/librarybook
 
 学生在线查座位、预约时段、取消预约；管理员后台管理座位、查看预约和统计数据。
@@ -11,11 +11,11 @@
 
 | 层 | 技术 |
 |------|------|
-| 框架 | ASP.NET Core MVC (.NET 8) |
+| 框架 | ASP.NET Core MVC (net10.0) |
 | 视图 | Razor (.cshtml) + Bootstrap 5 |
-| 数据访问 | Entity Framework Core 8.x (Code First + EnsureCreated) |
+| 数据访问 | Entity Framework Core 10.x (Code First + Migrations) |
 | 数据库 | SQL Server LocalDB (MSSQLLocalDB) |
-| 前端交互 | jQuery + AJAX |
+| 前端交互 | AJAX (原生 + Bootstrap) |
 
 **不引入：** AutoMapper / Serilog / Redis / SignalR / 第三方图表库
 
@@ -27,46 +27,50 @@
 > 标注「◇ 计划中」为后续 Sprint 计划生成的产物。
 
 ```
-LibrarySeatSystem/                   ← ASP.NET Core MVC 项目根（✓ 已有）
-├── Controllers/                      ✓ 已有
-│   ├── HomeController.cs            首页 + 切换账号
-│   └── AdminController.cs           管理员登录/退出
-├── Models/                           ✓ 已有（3 实体）
-│   ├── User.cs                      用户
-│   ├── Seat.cs                      座位
-│   ├── Reservation.cs               预约记录
-│   └── ErrorViewModel.cs
-├── ViewModels/                       ✓ 已有（Sprint 0 产出）
-│   ├── HomeIndexViewModel.cs
-│   ├── SeatWithStatus.cs
-│   ├── SeatDetailViewModel.cs
-│   ├── MyReservationsViewModel.cs
-│   ├── AdminReservationsViewModel.cs
-│   └── AdminStatsViewModel.cs
-├── Services/                         ✓ 已有（Sprint 0 产出）
-│   ├── ISeatService.cs
-│   ├── IReservationService.cs
-│   ├── IStatsService.cs
-│   ├── IUserService.cs
-│   ├── SeatService.cs
-│   ├── ReservationService.cs
-│   ├── StatsService.cs
-│   └── UserService.cs
-├── Data/                             ✓ 已有
-│   ├── AppDbContext.cs               EF Core DbContext
-│   └── DbInitializer.cs             种子数据
-├── Filters/                          ✓ 已有
-│   └── AdminAuthFilter.cs           管理员认证过滤器
-├── Views/                            ✓ 已有
-│   ├── Home/                         Index / Seats / Detail / Reserve / MyReservations / SwitchUser
-│   ├── Admin/                        Login / Seats / SeatCreate / SeatEdit / Reservations / Stats
-│   └── Shared/                       _Layout / _AdminLayout / Error
-├── wwwroot/                          ✓ 已有（Bootstrap 离线资源）
-├── Program.cs                        ✓ 已有
-├── appsettings.json                  ✓ 已有
-└── LibrarySeatSystem.csproj          ✓ 已有
-docs/                                ← 设计文档目录（✓ 已有）
-prototype/                           ← 原型目录（✓ 已有）
+LibrarySeatReservation.sln
+src/
+└── LibrarySeatReservation.Web/       ← ASP.NET Core MVC 项目根（✓ 已有）
+    ├── Controllers/                   ✓ 已有
+    │   ├── HomeController.cs          首页 + 座位列表 + 座位详情 + 切换账号
+    │   └── AdminController.cs         管理员登录/退出
+    ├── Models/                        ✓ 已有（3 实体）
+    │   ├── User.cs                    用户
+    │   ├── Seat.cs                    座位
+    │   ├── Reservation.cs             预约记录
+    │   └── ErrorViewModel.cs
+    ├── ViewModels/                    ✓ 已有（Sprint 1 第 1 轮填充）
+    │   ├── HomeIndexViewModel.cs      首页视图模型
+    │   ├── SeatWithStatus.cs          座位列表项（含占用状态）
+    │   ├── SeatDetailViewModel.cs     座位详情视图模型
+    │   ├── DashboardStats.cs          统计聚合
+    │   ├── MyReservationsViewModel.cs  ◇ 计划中
+    │   ├── AdminReservationsViewModel.cs ◇ 计划中
+    │   └── AdminStatsViewModel.cs     ◇ 计划中
+    ├── Services/                      ✓ 已有（含 Sprint 1 方法）
+    │   ├── Interfaces/
+    │   │   ├── ISeatService.cs
+    │   │   ├── IReservationService.cs
+    │   │   ├── IStatsService.cs
+    │   │   └── IUserService.cs
+    │   ├── SeatService.cs
+    │   ├── ReservationService.cs
+    │   ├── StatsService.cs
+    │   └── UserService.cs
+    ├── Data/                          ✓ 已有
+    │   ├── AppDbContext.cs            EF Core DbContext
+    │   └── DbInitializer.cs          种子数据
+    ├── Filters/                       ✓ 已有
+    │   └── AdminAuthFilter.cs        管理员认证过滤器
+    ├── Views/                         ✓ 已有（Sprint 1 第 1 轮填充）
+    │   ├── Home/                      Index / Seats / Detail / Reserve◇ / MyReservations◇
+    │   ├── Admin/                     Login
+    │   └── Shared/                    _Layout / _AdminLayout / Error
+    ├── Migrations/                    ✓ 已有（InitialCreate）
+    ├── wwwroot/                       ✓ 已有
+    ├── Program.cs                     ✓ 已有
+    └── appsettings.json               ✓ 已有
+docs/                                 ← 设计文档目录（✓ 已有）
+prototype/                            ← 原型目录（✓ 已有）
 ```
 
 ---
@@ -75,9 +79,9 @@ prototype/                           ← 原型目录（✓ 已有）
 
 | 端 | 页面 | 路由 | Sprint 归属 | 状态 |
 |----|------|------|------------|------|
-| 用户 | 首页 | `/` | Sprint 0 | ✅ 已有 |
-| 用户 | 座位列表 | `/Home/Seats` | Sprint 1 | ◇ 计划中 |
-| 用户 | 座位详情 | `/Home/Detail/{id}` | Sprint 1 | ◇ 计划中 |
+| 用户 | 首页 | `/` | Sprint 0 + S1 | ✅ 已有 |
+| 用户 | 座位列表 | `/Home/Seats` | Sprint 1 | ✅ 已有 |
+| 用户 | 座位详情 | `/Home/Detail/{id}` | Sprint 1 | ✅ 已有 |
 | 用户 | 预约提交 | `/Home/Reserve/{seatId}` | Sprint 1 | ◇ 计划中 |
 | 用户 | 我的预约 | `/Home/MyReservations` | Sprint 1 | ◇ 计划中 |
 | 管理 | 管理员登录 | `/Admin/Login` | Sprint 2 | ✅ 已有 |
@@ -89,22 +93,29 @@ prototype/                           ← 原型目录（✓ 已有）
 
 ## 已实现范围
 
-> 本段落随 Sprint 推进持续更新。当前为 Sprint 0 完成状态。
+> 本段落随 Sprint 推进持续更新。当前为 Sprint 1 第 1 轮完成状态。
 
-**当前仓库已有（Sprint 0 产出）：**
-- ✓ 分层架构骨架（Controllers / Services / Models / Data / Filters / Views）
-- ✓ EF Core 迁移 + 自动建库建表（Users / Seats / Reservations 三表，含 FK + 索引）
-- ✓ 种子数据（4 个用户：admin + zhangsan/lisi/wangwu；15 个座位：A-01~A-05 1F自习区 / B-01~B-05 2F安静区 / C-01~C-05 3F电子阅览区）
-- ✓ Service 层 4 接口 + 4 实现（含预约业务规则骨架）
-- ✓ 首页统计概览 + 切换体验账号 + 管理员登录
-- ✓ AdminAuthFilter（管理端认证拦截过滤器）
-- ✓ 全部设计文档（docs/01 ~ docs/12）
+**当前仓库已有：**
+- ✅ Sprint 0 骨架（分层架构 / EF Core 迁移 / 4 Services / 3 实体 / AdminAuthFilter / 种子数据）
+- ✅ 首页统计概览（ViewBag → HomeIndexViewModel） + 切换体验账号 + 管理员登录
+- ✅ 座位列表页（按楼层/区域筛选 + 空闲/已预约徽章 + 空状态 + 重置筛选）
+- ✅ 座位详情页（座位信息 + Date≥today 预约记录表 + 预约入口）
+- ✅ 导航栏（已登录用户名 + 下拉菜单/退出；未登录"选择账号""管理后台"）
+- ✅ 全部设计文档（docs/01 ~ docs/13）
 
-**Sprint 1 计划：**
-- ◇ 座位列表页（按楼层/区域筛选 + 占用标记）
-- ◇ 座位详情页（含预约记录）
-- ◇ 预约提交表单 + AJAX 冲突检测
-- ◇ 我的预约页（含取消功能）
+**Sprint 1 第 1 轮已交付（3 张卡）：**
+- ✅ T11-01 用户首页（ViewModel 重构）
+- ✅ T11-02 座位列表页（筛选 + 占用标记）
+- ✅ T11-03 座位详情页（含预约记录）
+
+**Sprint 1 待完成（5 张卡）：**
+- ◇ T11-04 预约提交页（GET 表单）
+- ◇ T11-05 预约提交 POST（AJAX + 冲突检测）
+- ◇ T11-06 我的预约页（含 CanCancel）
+- ◇ T11-07 取消预约（POST AJAX）
+- ◇ T11-08 账号切换与退出完善
+
+**种子数据：** 4 个用户（admin + zhangsan/lisi/wangwu）+ 45 个座位（3 层 × 3 区域 × 5 个 = A-01~I-05）
 
 **后续 Sprint 交付：**
 - ◇ Sprint 2：管理端 4 页完整可用
@@ -115,7 +126,7 @@ prototype/                           ← 原型目录（✓ 已有）
 ## 运行前提
 
 - Windows 系统（LocalDB 仅 Windows 可用）
-- .NET 8 SDK（`dotnet --list-sdks` 确认存在）
+- .NET 10 SDK（`dotnet --list-sdks` 确认存在 10.0.200+）
 - SQL Server LocalDB（`sqllocaldb info MSSQLLocalDB` 确认可用）
 - Git（`git --version` 确认已安装）
 
@@ -129,7 +140,7 @@ git clone https://github.com/dongyuehua13/librarybook.git
 cd librarybook
 
 # 2. 进入项目目录
-cd LibrarySeatSystem
+cd src\LibrarySeatReservation.Web
 
 # 3. 还原 NuGet 包
 dotnet restore
@@ -137,11 +148,12 @@ dotnet restore
 # 4. 首次构建
 dotnet build
 
-# 5. 首次运行（自动建库建表 + 写入种子数据）
+# 5. 首次运行（自动迁移 + 写入种子数据）
 dotnet run --urls "http://localhost:5002"
 
 # 6. 浏览器打开
 # 用户端首页：http://localhost:5002
+# 座位列表：http://localhost:5002/Home/Seats
 # 管理员登录：http://localhost:5002/Admin/Login
 ```
 
@@ -149,19 +161,17 @@ dotnet run --urls "http://localhost:5002"
 
 ## 数据库初始化方式
 
-系统使用 **Code First + EnsureCreated()** 自动建库，首次 `dotnet run` 时自动创建数据库和表，无需手动执行迁移命令。
+系统使用 **Code First + EF Core Migrations** 自动建库，首次 `dotnet run` 时自动应用迁移并写入种子数据。
 
 Program.cs 中启动时自动流程：
-1. `db.Database.EnsureCreated()` → 库不存在时创建库和所有表
+1. `db.Database.Migrate()` → 应用全部待处理迁移（首次建库建表）
 2. `DbInitializer.Seed(db)` → Users 表为空时写入种子数据
 
-> ⚠️ `EnsureCreated()` 不支持增量表结构变更。如需修改表结构，需先手动删除数据库再重启：
+> ⚠️ `Migrate()` 支持增量表结构变更。如需新增表或字段：
 > ```bash
-> dotnet run                                   # 启动后访问任意页面触发建库
-> # 或手动删除 LocalDB:
-> sqllocaldb stop MSSQLLocalDB
-> sqllocaldb delete MSSQLLocalDB
-> dotnet run
+> cd src\LibrarySeatReservation.Web
+> dotnet ef migrations add <名称>
+> dotnet ef database update
 > ```
 >
 > 本设计为课堂实训约定，不用于生产环境。
@@ -175,7 +185,8 @@ Program.cs 中启动时自动流程：
 | 管理员 | `admin` | 管理端登录用（无密码，仅校验用户名） |
 | 学生 | `zhangsan` / `lisi` / `wangwu` | 前端通过下拉切换账号（无密码） |
 
-所有账号为种子数据预设，不支持注册新用户。
+所有账号为种子数据预设，不支持注册新用户。  
+种子数据还包含 45 个座位（3 层 × 3 区域 × 5 个：自习区/安静区/电子阅览区，编号 A-01~I-05）。
 
 ---
 
@@ -208,7 +219,7 @@ Program.cs 中启动时自动流程：
 - [x] 开发准备与 Sprint 0（docs/10）
 - [x] 开发前一致性审计（docs/11）
 - [x] **Sprint 0 — 工程骨架 ✓**
-- [ ] Sprint 1 — 用户端开发
+- [ ] **Sprint 1 — 用户端开发**（第 1 轮完成 · 3/8 卡 · 37.5%）→ [docs/13](docs/13-用户端主链路开发记录.md)
 - [ ] Sprint 2 — 管理端开发
 - [ ] Sprint 3 — 集成与完善
 
