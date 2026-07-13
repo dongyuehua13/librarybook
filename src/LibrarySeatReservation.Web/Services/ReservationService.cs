@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using LibrarySeatReservation.Web.Data;
 using LibrarySeatReservation.Web.Models;
 using LibrarySeatReservation.Web.Services.Interfaces;
+using LibrarySeatReservation.Web.ViewModels;
 
 namespace LibrarySeatReservation.Web.Services;
 
@@ -14,13 +15,32 @@ public class ReservationService : IReservationService
         _db = db;
     }
 
-    public async Task<List<Reservation>> GetUserReservationsAsync(int userId)
+    public async Task<MyReservationsViewModel> GetUserReservationsAsync(int userId)
     {
-        return await _db.Reservations
-            .Include(r => r.Seat)
+        var now = DateTime.Now;
+        var today = DateOnly.FromDateTime(now);
+
+        var records = await _db.Reservations
             .Where(r => r.UserId == userId)
+            .Include(r => r.Seat)
             .OrderByDescending(r => r.CreatedAt)
             .ToListAsync();
+
+        var items = records.Select(r => new ReservationItem
+        {
+            Id = r.Id,
+            SeatNumber = r.Seat.SeatNumber,
+            Date = r.Date,
+            StartTime = r.StartTime,
+            EndTime = r.EndTime,
+            Status = r.Status,
+            CreatedAt = r.CreatedAt,
+            CanCancel = r.Status == "已预约" &&
+                        (r.Date > today ||
+                         (r.Date == today && r.StartTime > TimeOnly.FromDateTime(now)))
+        }).ToList();
+
+        return new MyReservationsViewModel { Items = items };
     }
 
     public async Task<List<Reservation>> GetAllAsync()
@@ -105,9 +125,12 @@ public class ReservationService : IReservationService
         if (reservation.Status != "已预约")
             return (false, "该预约已取消");
 
-        var now = TimeOnly.FromDateTime(DateTime.Now);
-        if (now >= reservation.StartTime)
-            return (false, "预约已经开始或已过期，无法取消");
+        var now = DateOnly.FromDateTime(DateTime.Now);
+        var nowTime = TimeOnly.FromDateTime(DateTime.Now);
+        if (reservation.Date < now)
+            return (false, "已过期的预约无法取消");
+        if (reservation.Date == now && reservation.StartTime <= nowTime)
+            return (false, "预约已开始，无法取消");
 
         reservation.Status = "已取消";
         await _db.SaveChangesAsync();

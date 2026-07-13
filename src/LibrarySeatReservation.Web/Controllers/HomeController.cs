@@ -57,6 +57,68 @@ public class HomeController : Controller
         return View(detail);
     }
 
+    public async Task<IActionResult> Reserve(int seatId)
+    {
+        if (HttpContext.Session.GetInt32("UserId") == null)
+            return RedirectToAction("Index");
+
+        var seat = await _seatService.GetSeatByIdAsync(seatId);
+        if (seat == null || !seat.IsActive)
+            return NotFound();
+
+        return View(seat);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Reserve(int seatId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null)
+            return Json(new { success = false, message = "请先选择学生账号" });
+
+        if (startTime >= endTime)
+            return Json(new { success = false, message = "结束时间必须晚于开始时间" });
+
+        if (startTime.Hour < 8 || endTime.Hour > 22 || (endTime.Hour == 22 && endTime.Minute > 0))
+            return Json(new { success = false, message = "预约时段必须在 8:00-22:00 之间" });
+
+        var duration = endTime - startTime;
+        if (duration > new TimeSpan(4, 0, 0))
+            return Json(new { success = false, message = "单次预约最长4小时" });
+
+        if (duration < new TimeSpan(1, 0, 0))
+            return Json(new { success = false, message = "预约时长至少 1 小时" });
+
+        if (date < DateOnly.FromDateTime(DateTime.Today))
+            return Json(new { success = false, message = "不能预约过去的日期" });
+
+        var (success, message) = await _reservationService.CreateAsync(
+            userId.Value, seatId, date, startTime, endTime);
+
+        return Json(new { success, message });
+    }
+
+    public async Task<IActionResult> MyReservations()
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null)
+            return RedirectToAction("Index");
+
+        var viewModel = await _reservationService.GetUserReservationsAsync(userId.Value);
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Cancel(int id)
+    {
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null)
+            return Json(new { success = false, message = "请先选择学生账号" });
+
+        var (success, message) = await _reservationService.CancelAsync(id, userId.Value);
+        return Json(new { success, message });
+    }
+
     [HttpPost]
     public async Task<IActionResult> SwitchUser(int userId)
     {

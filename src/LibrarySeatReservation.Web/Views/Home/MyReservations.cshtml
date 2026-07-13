@@ -1,6 +1,110 @@
+@model MyReservationsViewModel
 @{
     ViewData["Title"] = "我的预约";
+    var userName = Context.Session.GetString("UserName") ?? "";
 }
 
-<h2>我的预约</h2>
-<p class="text-muted">功能开发中，请期待下一迭代。</p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">首页</a></li>
+        <li class="breadcrumb-item active">我的预约</li>
+    </ol>
+</nav>
+
+<h4 class="mb-4">@userName 的预约记录</h4>
+
+<div id="cancelNotification" class="alert d-none" role="alert"></div>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <h5 class="text-muted">暂无预约记录</h5>
+            <a href="/Home/Seats" class="btn btn-outline-primary mt-2">去预约座位</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>座位编号</th>
+                    <th>日期</th>
+                    <th>时段</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr id="row-@item.Id">
+                        <td>@item.SeatNumber</td>
+                        <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                        <td>@item.StartTime.ToString("HH:mm") - @item.EndTime.ToString("HH:mm")</td>
+                        <td>
+                            @if (item.Status == "已预约")
+                            {
+                                <span class="badge bg-primary">已预约</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@item.Status</span>
+                            }
+                        </td>
+                        <td class="text-muted small">@item.CreatedAt.ToString("MM-dd HH:mm")</td>
+                        <td>
+                            @if (item.CanCancel)
+                            {
+                                <button class="btn btn-sm btn-outline-danger cancel-btn" data-id="@item.Id">取消</button>
+                            }
+                            else if (item.Status == "已预约")
+                            {
+                                <span class="text-muted small">不可取消</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.cancel-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                if (!confirm('确定取消该预约？')) return;
+                var id = this.dataset.id;
+                var notif = document.getElementById('cancelNotification');
+                notif.classList.add('d-none');
+
+                fetch('/Home/Cancel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'id=' + id
+                })
+                .then(r => r.json())
+                .then(data => {
+                    notif.classList.remove('d-none', 'alert-success', 'alert-danger');
+                    if (data.success) {
+                        notif.classList.add('alert-success');
+                        notif.textContent = data.message;
+                        location.reload();
+                    } else {
+                        notif.classList.add('alert-danger');
+                        notif.textContent = data.message;
+                    }
+                })
+                .catch(function() {
+                    notif.classList.remove('d-none', 'alert-success', 'alert-danger');
+                    notif.classList.add('alert-danger');
+                    notif.textContent = '网络异常，请重试';
+                });
+            });
+        });
+    </script>
+}
