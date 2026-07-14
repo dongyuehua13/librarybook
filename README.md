@@ -86,16 +86,18 @@ prototype/                           ← 原型目录（✓ 已有）
 
 ## 已实现范围
 
-> 本段落随 Sprint 推进持续更新。当前为 Sprint 1 完成、Sprint 2 进行中（4/8）、Sprint 3 部分完成状态。
+> 本段落随 Sprint 推进持续更新。当前 Sprint 0~4 全部完成，P0 清零。
 
 **当前仓库已有：**
 - ✅ Sprint 0 骨架（分层架构 / EF Core / 4 Services / 3 实体 / AdminAuthFilter / 种子数据）
 - ✅ Sprint 1 用户端完整闭环（首页 → 列表 → 详情 → 预约提交 → 我的预约 → 取消 → 切换账号）
 - ✅ Sprint 2 管理端完整（登录/登出 → 座位管理 CRUD + 行内切换 → 预约筛选 → 统计页）
 - ✅ 全部 9 页（P01~P09）已实现
-- ✅ Sprint 3 视觉统一（全部状态徽章对齐 UI 规范，表单 invalid-feedback 校验，导航显示管理员名）
-- ✅ 30 项集成测试（T13-02/03 测试代码已完成）
-- ✅ 全部设计文档（docs/01 ~ docs/15）
+- ✅ Sprint 3 视觉统一 + 表单校验 + 代码审计 + Playwright 覆盖率
+- ✅ Sprint 4 联调测试闭环 + P0 缺陷修复（AdminAuthFilter）
+- ✅ Playwright 11 条自动点击（channel: msedge）+ 脚本烟雾测试 4 端点
+- ✅ 50 项测试（30 项集成 + 11 项 Playwright + 4 烟雾 + 5 兼容/推理）
+- ✅ 全部设计文档（docs/01 ~ docs/16）
 
 **Sprint 1 已交付（8 张卡）：**
 - ✅ T11-01 用户首页 | T11-02 座位列表页 | T11-03 座位详情页
@@ -107,12 +109,17 @@ prototype/                           ← 原型目录（✓ 已有）
 
 **种子数据：** 4 个用户（admin + zhangsan/lisi/wangwu）+ 15 个座位（A-01~C-05）
 
-**Sprint 3 进度（5/6 · 第 2 轮完成）：**
+**Sprint 3 进度（6/6 · 第 2 轮完成 + Sprint 4 浏览器验证闭环）：**
 - ✅ T13-01 原型评审高优问题修复（含第 2 轮补 invalid-feedback）
 - ✅ T13-04 代码一致性审计 | T13-05 补充注释与文档
 - ✅ T13-06 推送至远程仓库（`d4ca931` 已推送到 GitHub）
-- ◇ T13-02 端到端集成测试（代码 30 项 + 全部 9 条场景后端逻辑 ✅，浏览器验证待环境）
-- ◇ T13-03 边界场景测试（代码 20 项 + 全部 16 种异常后端逻辑 ✅，浏览器验证待环境）
+- ✅ T13-02 端到端集成测试（代码 30 项 + Playwright 11 条浏览器自动点击 ✅）
+- ✅ T13-03 边界场景测试（代码 20 项 + 浏览器核心链路覆盖 ✅）
+
+**Sprint 4 进度（7/7 · 第 1 轮完成）：**
+- ✅ T14-01 环境评估 | T14-02 Playwright 安装+配置 | T14-03 自动点击测试 11/11
+- ✅ T14-04 脚本烟雾测试 4/4 | T14-05 **缺陷修复（AdminAuthFilter P0）**
+- ✅ T14-06 兼容性记录 | T14-07 文档/任务板/README 更新
 
 ---
 
@@ -192,9 +199,45 @@ Program.cs 中启动时自动流程：
 | LocalDB 仅 Windows | macOS/Linux 无法运行 | 课堂阶段不做跨平台 |
 | 无定时任务 | 座位不会自动释放过期预约 | 课堂阶段不做 |
 | 无分页 | 数据量小，直接 .ToList() | 如数据超 100 条可后续加 Skip/Take |
+| Playwright 仅测试 Edge | 使用 `channel: msedge`，未测试 Chrome/Firefox/Safari | 同内核可推断 |
+| 管理端表格无 table-responsive | 窄屏可能溢出 | P1 优化 |
 
 
 ---
+
+## E2E 自动化验证（Playwright + Microsoft Edge）
+
+### 环境要求
+
+- Node.js ≥ 18（已确认 v26.3.1）
+- Microsoft Edge（已确认安装于系统路径）
+
+### 安装与执行
+
+```bash
+# 1. 进入测试目录
+cd tests
+
+# 2. 安装依赖（首次）
+npm install
+
+# 3. 运行 Playwright 自动点击烟雾测试（11 条用例，基于 channel: msedge）
+npx playwright test --reporter=list
+
+# 4. 运行脚本烟雾测试（4 端点 HTTP 200 检查）
+powershell -File smoke-test.ps1
+```
+
+> **注意：** 使用系统已安装的 Microsoft Edge，不下载 Playwright 自带浏览器。测试前需确保应用已在 `http://localhost:5002` 运行。
+
+### 测试覆盖
+
+| 类型 | 覆盖范围 | 用例数 | 状态 |
+|------|---------|--------|------|
+| Playwright 自动点击 | 用户端 5 + 管理端 4 + 后端逻辑 2 | 11 | ✅ **全部通过** |
+| 脚本烟雾测试 | 首页 / 座位列表 / 座位详情 / 管理员登录 | 4 | ✅ **全部通过** |
+
+详细测试结果见 `docs/16-联调测试与缺陷闭环.md`。
 
 ## 当前阶段
 
@@ -213,7 +256,8 @@ Program.cs 中启动时自动流程：
 - [x] **Sprint 0 — 工程骨架 ✓**
 - [x] **Sprint 1 — 用户端开发**（8/8 ✅）
 - [x] **Sprint 2 — 管理端开发**（8/8 ✅）
-- [x] **Sprint 3 — 集成与完善**（5/6 ✅ · 代码层面完整，浏览器验证待环境）
+- [x] **Sprint 3 — 集成与完善**（6/6 ✅ · 代码层面完整，Playwright 浏览器验证已通过）
+- [x] **Sprint 4 — 联调测试与缺陷闭环**（7/7 ✅ · P0 清零）
 
 ---
 

@@ -7,6 +7,10 @@ public class AdminAuthFilter : IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
+        var action = context.RouteData.Values["action"]?.ToString();
+        if (action == "Login" || action == "Logout")
+            return;
+
         if (context.HttpContext.Session.GetInt32("AdminId") == null)
         {
             if (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
