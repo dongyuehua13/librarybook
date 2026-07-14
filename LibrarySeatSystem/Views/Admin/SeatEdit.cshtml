@@ -11,18 +11,20 @@
                 <h5 class="mb-0"><i class="bi bi-pencil"></i> 编辑座位 @Model.SeatNumber</h5>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" class="needs-validation" novalidate>
                     <input type="hidden" asp-for="Id" />
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <div class="mb-3">
                         <label class="form-label">座位编号</label>
                         <input asp-for="SeatNumber" class="form-control" required />
+                        <div class="invalid-feedback">请输入座位编号</div>
                         <span asp-validation-for="SeatNumber" class="text-danger"></span>
                     </div>
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label">楼层</label>
-                            <input asp-for="Floor" class="form-control" type="number" min="1" />
+                            <input asp-for="Floor" class="form-control" type="number" min="1" required />
+                            <div class="invalid-feedback">楼层范围 1-10</div>
                         </div>
                         <div class="col">
                             <label class="form-label">区域</label>
@@ -44,3 +46,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function () { 'use strict'; var forms = document.querySelectorAll('.needs-validation'); Array.prototype.slice.call(forms).forEach(function (form) { form.addEventListener('submit', function (event) { if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); })();
+    </script>
+}

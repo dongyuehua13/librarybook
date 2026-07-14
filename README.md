@@ -1,6 +1,6 @@
 # 图书馆座位预约系统
 
-> 单人课堂实训项目 · ASP.NET Core MVC (.NET 8) · SQL Server LocalDB · Bootstrap 5  
+> 单人课堂实训项目 · ASP.NET Core MVC (net10.0) · SQL Server LocalDB · Bootstrap 5  
 > GitHub：https://github.com/dongyuehua13/librarybook
 
 学生在线查座位、预约时段、取消预约；管理员后台管理座位、查看预约和统计数据。
@@ -11,9 +11,9 @@
 
 | 层 | 技术 |
 |------|------|
-| 框架 | ASP.NET Core MVC (net10.0) |
+| 框架 | ASP.NET Core MVC (net8.0) |
 | 视图 | Razor (.cshtml) + Bootstrap 5 |
-| 数据访问 | Entity Framework Core 10.x (Code First + Migrations) |
+| 数据访问 | Entity Framework Core 8.x (EnsureCreated) |
 | 数据库 | SQL Server LocalDB (MSSQLLocalDB) |
 | 前端交互 | jQuery + AJAX |
 
@@ -93,10 +93,10 @@ prototype/                           ← 原型目录（✓ 已有）
 - ✅ Sprint 1 用户端完整闭环（首页 → 列表 → 详情 → 预约提交 → 我的预约 → 取消 → 切换账号）
 - ✅ Sprint 2 管理端完整（登录/登出 → 座位管理 CRUD + 行内切换 → 预约筛选 → 统计页）
 - ✅ 全部 9 页（P01~P09）已实现
-- ✅ Sprint 3 视觉统一 + 表单校验 + 代码审计 + Playwright 覆盖率
+- ✅ Sprint 3 视觉统一 + 表单校验 + 代码审计
 - ✅ Sprint 4 联调测试闭环 + P0 缺陷修复（AdminAuthFilter）
-- ✅ Playwright 11 条自动点击（channel: msedge）+ 脚本烟雾测试 4 端点
-- ✅ 50 项测试（30 项集成 + 11 项 Playwright + 4 烟雾 + 5 兼容/推理）
+- ✅ Playwright 12 条自动点击（channel: msedge）+ 烟雾测试 4 端点
+- ✅ 46 项测试（30 项集成 + 12 项 Playwright + 4 端烟雾）
 - ✅ 全部设计文档（docs/01 ~ docs/16）
 
 **Sprint 1 已交付（8 张卡）：**
@@ -113,11 +113,11 @@ prototype/                           ← 原型目录（✓ 已有）
 - ✅ T13-01 原型评审高优问题修复（含第 2 轮补 invalid-feedback）
 - ✅ T13-04 代码一致性审计 | T13-05 补充注释与文档
 - ✅ T13-06 推送至远程仓库（`d4ca931` 已推送到 GitHub）
-- ✅ T13-02 端到端集成测试（代码 30 项 + Playwright 11 条浏览器自动点击 ✅）
+- ✅ T13-02 端到端集成测试（代码 30 项 + Playwright 12 条浏览器自动点击 ✅）
 - ✅ T13-03 边界场景测试（代码 20 项 + 浏览器核心链路覆盖 ✅）
 
 **Sprint 4 进度（7/7 · 第 1 轮完成）：**
-- ✅ T14-01 环境评估 | T14-02 Playwright 安装+配置 | T14-03 自动点击测试 11/11
+- ✅ T14-01 环境评估 | T14-02 Playwright 安装+配置 | T14-03 自动点击测试 12/12
 - ✅ T14-04 脚本烟雾测试 4/4 | T14-05 **缺陷修复（AdminAuthFilter P0）**
 - ✅ T14-06 兼容性记录 | T14-07 文档/任务板/README 更新
 
@@ -126,7 +126,7 @@ prototype/                           ← 原型目录（✓ 已有）
 ## 运行前提
 
 - Windows 系统（LocalDB 仅 Windows 可用）
-- .NET 10 SDK（`dotnet --list-sdks` 确认存在 10.0.x）
+- .NET 8 SDK（`dotnet --list-sdks` 确认存在 8.0.x）
 - SQL Server LocalDB（`sqllocaldb info MSSQLLocalDB` 确认可用）
 - Git（`git --version` 确认已安装）
 
@@ -161,10 +161,10 @@ dotnet run --urls "http://localhost:5002"
 
 ## 数据库初始化方式
 
-系统使用 **Code First + EF Core Migrations** 自动建库，首次 `dotnet run` 时自动执行迁移并写入种子数据。
+系统使用 **EnsureCreated** 自动建库，首次 `dotnet run` 时自动根据实体模型创建表结构并写入种子数据。
 
 Program.cs 中启动时自动流程：
-1. `db.Database.Migrate()` → 自动执行所有迁移文件建库建表
+1. `db.Database.EnsureCreated()` → 库不存在时自动建库建表
 2. `DbInitializer.Seed(db)` → Users 表为空时写入种子数据
 
 > 如需重置数据库：
@@ -216,15 +216,15 @@ Program.cs 中启动时自动流程：
 
 ```bash
 # 1. 进入测试目录
-cd tests
+cd e2e
 
 # 2. 安装依赖（首次）
 npm install
 
-# 3. 运行 Playwright 自动点击烟雾测试（11 条用例，基于 channel: msedge）
+# 3. 运行 Playwright 自动点击测试（基于 channel: msedge）
 npx playwright test --reporter=list
 
-# 4. 运行脚本烟雾测试（4 端点 HTTP 200 检查）
+# 4. 运行脚本烟雾测试（HTTP 200 检查）
 powershell -File smoke-test.ps1
 ```
 
@@ -234,7 +234,7 @@ powershell -File smoke-test.ps1
 
 | 类型 | 覆盖范围 | 用例数 | 状态 |
 |------|---------|--------|------|
-| Playwright 自动点击 | 用户端 5 + 管理端 4 + 后端逻辑 2 | 11 | ✅ **全部通过** |
+| Playwright 自动点击 | 烟雾 4 + 用户端 4 + 管理端 4 | 12 | ✅ **全部通过（2026-07-14 验证）** |
 | 脚本烟雾测试 | 首页 / 座位列表 / 座位详情 / 管理员登录 | 4 | ✅ **全部通过** |
 
 详细测试结果见 `docs/16-联调测试与缺陷闭环.md`。
@@ -285,6 +285,21 @@ powershell -File smoke-test.ps1
 16. 点击"预约管理"                                    → 预约记录表格，支持下拉状态 + 日期范围筛选
 17. 点击"数据统计"                                    → 三张统计卡片 + 座位热度排行 + 14 日趋势
 18. 点击"返回首页"（此时禁用座位不再出现在用户端）   → 用户端已屏蔽禁用座位
+```
+
+---
+
+## 项目目录
+
+```
+librarybook/
+├── LibrarySeatSystem/          ← ASP.NET Core MVC 主项目（.sln 引用）
+├── LibrarySeatSystem.Tests/    ← xUnit 集成测试
+├── e2e/                        ← Playwright E2E 测试（channel: msedge）
+├── database/                   ← 数据库初始化说明
+├── docs/                       ← 设计文档与开发记录（01~17）
+├── prototype/                  ← 静态原型
+└── README.md                   ← 本文件
 ```
 
 ---

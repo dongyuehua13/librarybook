@@ -23,32 +23,37 @@
                     @Model.Floor 楼 · @Model.Area · @(!string.IsNullOrEmpty(Model.Description) ? Model.Description : "")
                 </div>
 
-                <form id="reserveForm">
+                <form id="reserveForm" class="needs-validation" novalidate>
                     <input type="hidden" name="seatId" value="@Model.Id" />
 
                     <div class="mb-3">
                         <label class="form-label">预约日期</label>
                         <input type="date" name="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                        <div class="invalid-feedback">请选择预约日期</div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col">
                             <label class="form-label">开始时间</label>
                             <select name="startTime" class="form-select" required>
+                                <option value="">请选择</option>
                                 @for (int h = 8; h <= 21; h++)
                                 {
                                     <option value="@(h):00">@h:00</option>
                                 }
                             </select>
+                            <div class="invalid-feedback">请选择开始时间</div>
                         </div>
                         <div class="col">
                             <label class="form-label">结束时间</label>
                             <select name="endTime" class="form-select" required>
+                                <option value="">请选择</option>
                                 @for (int h = 9; h <= 22; h++)
                                 {
                                     <option value="@(h):00" selected="@(h == 9)">@h:00</option>
                                 }
                             </select>
+                            <div class="invalid-feedback">请选择结束时间</div>
                         </div>
                     </div>
                     <p class="text-muted small mb-3"><i class="bi bi-info-circle"></i> 单次预约最长4小时，每日最多预约2次</p>
@@ -76,6 +81,13 @@
 @section Scripts {
     <script>
         $('#reserveForm').submit(function(e) {
+            var form = this;
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
             e.preventDefault();
             var btn = $(this).find('button[type="submit"]');
             btn.prop('disabled', true);

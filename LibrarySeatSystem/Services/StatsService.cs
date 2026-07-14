@@ -32,7 +32,7 @@ public class StatsService : IStatsService
         var totalActiveSeats = await _db.Seats.CountAsync(s => s.IsActive);
         var totalReservations = await _db.Reservations.CountAsync();
         var todayReservations = await _db.Reservations
-            .CountAsync(r => r.Date == today);
+            .CountAsync(r => r.Date == today && r.Status == "已预约");
 
         var seatRankings = await _db.Reservations
             .Where(r => r.Status == "已预约")

@@ -1,7 +1,6 @@
-﻿@{
+﻿@model LibrarySeatSystem.ViewModels.HomeIndexViewModel
+@{
     ViewData["Title"] = "首页";
-    var userId = Context.Session.GetInt32("UserId");
-    var userName = Context.Session.GetString("UserName");
 }
 
 <div class="text-center mb-4">
@@ -9,7 +8,7 @@
     <p class="lead text-muted">便捷预约，高效学习</p>
 </div>
 
-@if (!userId.HasValue)
+@if (!Model.IsLoggedIn)
 {
     <div class="alert alert-warning text-center">
         <i class="bi bi-info-circle"></i> 请先
@@ -20,7 +19,7 @@
 else
 {
     <div class="alert alert-success text-center">
-        <i class="bi bi-person-circle"></i> 当前用户：<strong>@userName</strong>
+        <i class="bi bi-person-circle"></i> 当前用户：<strong>@Model.CurrentUserName</strong>
         <a asp-action="Logout" class="btn btn-sm btn-outline-danger ms-2">退出</a>
     </div>
 }
@@ -30,7 +29,7 @@ else
         <div class="card text-center border-primary h-100">
             <div class="card-body">
                 <h5 class="card-title text-primary"><i class="bi bi-grid-3x3-gap"></i> 座位总数</h5>
-                <p class="display-6 fw-bold text-primary">@ViewBag.TotalSeats</p>
+                <p class="display-6 fw-bold text-primary">@Model.TotalActiveSeats</p>
                 <p class="card-text text-muted">可用座位数量</p>
             </div>
         </div>
@@ -39,7 +38,7 @@ else
         <div class="card text-center border-success h-100">
             <div class="card-body">
                 <h5 class="card-title text-success"><i class="bi bi-calendar-check"></i> 今日预约</h5>
-                <p class="display-6 fw-bold text-success">@ViewBag.TodayReservations</p>
+                <p class="display-6 fw-bold text-success">@Model.TodayReservations</p>
                 <p class="card-text text-muted">今日预约次数</p>
             </div>
         </div>
@@ -72,7 +71,7 @@ else
                 <i class="bi bi-calendar-check display-3 text-success"></i>
                 <h4 class="mt-2">我的预约</h4>
                 <p class="text-muted">查看和管理您的全部预约记录</p>
-                <a asp-action="MyReservations" class="btn btn-success @(!userId.HasValue ? "disabled" : "")">
+                <a asp-action="MyReservations" class="btn btn-success @(!Model.IsLoggedIn ? "disabled" : "")">
                     <i class="bi bi-list"></i> 查看预约
                 </a>
             </div>

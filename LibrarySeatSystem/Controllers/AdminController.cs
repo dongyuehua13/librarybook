@@ -97,7 +97,7 @@ public class AdminController : Controller
     public async Task<IActionResult> SeatToggle(int id)
     {
         var result = await _seatService.ToggleActiveAsync(id);
-        return Json(new { success = result.Success, message = result.Message });
+        return Json(new { success = result.Success, message = result.Message, isActive = result.IsActive });
     }
 
     public async Task<IActionResult> Reservations(string? status, DateTime? dateFrom, DateTime? dateTo)

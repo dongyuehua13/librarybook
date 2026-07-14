@@ -59,7 +59,20 @@
         $('.toggle-btn').click(function() {
             var btn = $(this);
             $.post('/Admin/SeatToggle', { id: btn.data('id') }, function(res) {
-                if (res.success) location.reload();
+                if (!res.success) return;
+                var row = btn.closest('tr');
+                var badge = row.find('td').eq(4).children('span');
+                if (res.isActive) {
+                    badge.removeClass('bg-danger').addClass('bg-success').text('启用');
+                    btn.removeClass('btn-outline-success').addClass('btn-outline-warning');
+                    btn.find('i').removeClass('bi-play-circle').addClass('bi-pause-circle');
+                    btn.text('禁用').prepend('<i class="bi bi-pause-circle"></i> ');
+                } else {
+                    badge.removeClass('bg-success').addClass('bg-danger').text('禁用');
+                    btn.removeClass('btn-outline-warning').addClass('btn-outline-success');
+                    btn.find('i').removeClass('bi-pause-circle').addClass('bi-play-circle');
+                    btn.text('启用').prepend('<i class="bi bi-play-circle"></i> ');
+                }
             });
         });
     </script>

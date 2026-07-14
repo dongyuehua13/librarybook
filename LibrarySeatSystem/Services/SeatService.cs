@@ -103,15 +103,15 @@ public class SeatService : ISeatService
         return (true, "更新成功");
     }
 
-    public async Task<(bool Success, string Message)> ToggleActiveAsync(int id)
+    public async Task<(bool Success, string Message, bool IsActive)> ToggleActiveAsync(int id)
     {
         var seat = await _db.Seats.FindAsync(id);
         if (seat == null)
-            return (false, "座位不存在");
+            return (false, "座位不存在", false);
 
         seat.IsActive = !seat.IsActive;
         await _db.SaveChangesAsync();
-        return (true, seat.IsActive ? "已启用" : "已禁用");
+        return (true, seat.IsActive ? "已启用" : "已禁用", seat.IsActive);
     }
 
     public async Task SaveChangesAsync()

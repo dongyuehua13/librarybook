@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using LibrarySeatSystem.Services;
+using LibrarySeatSystem.ViewModels;
 
 namespace LibrarySeatSystem.Controllers;
 
@@ -22,9 +23,14 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var stats = await _statsService.GetDashboardStatsAsync();
-        ViewBag.TotalSeats = stats.TotalActiveSeats;
-        ViewBag.TodayReservations = stats.TodayReservations;
-        return View();
+        var vm = new HomeIndexViewModel
+        {
+            TotalActiveSeats = stats.TotalActiveSeats,
+            TodayReservations = stats.TodayReservations,
+            CurrentUserName = HttpContext.Session.GetString("UserName"),
+            IsLoggedIn = HttpContext.Session.GetInt32("UserId").HasValue
+        };
+        return View(vm);
     }
 
     public async Task<IActionResult> Seats(int? floor, string? area)

@@ -75,7 +75,7 @@
                                     <tr>
                                         <td>@r.Date.ToString("yyyy-MM-dd")</td>
                                         <td>@r.StartTime.ToString(@"hh\:mm") - @r.EndTime.ToString(@"hh\:mm")</td>
-                                        <td><span class="badge @(r.Status == "已预约" ? "bg-warning text-dark" : "bg-secondary")">@r.Status</span></td>
+                                        <td><span class="badge @(r.Status == "已预约" ? "bg-danger" : "bg-secondary")">@r.Status</span></td>
                                     </tr>
                                 }
                             </tbody>
