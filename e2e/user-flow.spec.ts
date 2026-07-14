@@ -12,9 +12,9 @@ test.describe('用户端 e2e 主链路', () => {
     await expect(page).toHaveURL(/\/Home\/Detail\/\d+/);
   });
 
-  test('T13-02 SC02: 未登录访问预约页应重定向', async ({ page }) => {
+  test('T13-02 SC02: 未登录访问预约页应重定向到首页', async ({ page }) => {
     await page.goto('/Home/Reserve/1');
-    await expect(page).toHaveURL(/\/Home\/(Seats|SwitchUser)/);
+    await expect(page).toHaveURL(/\/$/);
   });
 
   test('T13-03 EX01: 座位列表含已预约标记', async ({ page }) => {
@@ -24,9 +24,9 @@ test.describe('用户端 e2e 主链路', () => {
     expect(count).toBeGreaterThanOrEqual(0);
   });
 
-  test('SwitchUser 页面展示3个学生账号', async ({ page }) => {
-    await page.goto('/Home/SwitchUser');
-    const buttons = page.locator('button[type="submit"]');
+  test('首页展示3个学生账号', async ({ page }) => {
+    await page.goto('/');
+    const buttons = page.locator('form[action="/Home/SwitchUser"] button');
     await expect(buttons).toHaveCount(3);
   });
 });
